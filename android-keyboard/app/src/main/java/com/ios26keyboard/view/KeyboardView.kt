@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -30,8 +29,6 @@ class KeyboardView @JvmOverloads constructor(
     private lateinit var row3: LinearLayout
     private lateinit var row4: LinearLayout
     private lateinit var suggestionBar: LinearLayout
-    private lateinit var btnEmoji: ImageView
-    private lateinit var btnMic: ImageView
 
     interface OnKeyPressedListener {
         fun onKeyPressed(key: String)
@@ -57,18 +54,6 @@ class KeyboardView @JvmOverloads constructor(
         row3 = findViewById(R.id.row_3)
         row4 = findViewById(R.id.row_4)
         suggestionBar = findViewById(R.id.suggestion_bar)
-        btnEmoji = findViewById(R.id.btn_emoji)
-        btnMic = findViewById(R.id.btn_mic)
-
-        btnEmoji.setOnClickListener {
-            HapticHelper.performKeyPressHaptic(it)
-            keyListener?.onEmojiPressed()
-        }
-
-        btnMic.setOnClickListener {
-            HapticHelper.performKeyPressHaptic(it)
-            keyListener?.onMicPressed()
-        }
     }
 
     private fun setupKeyboard() {

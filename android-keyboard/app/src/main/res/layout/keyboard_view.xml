@@ -97,37 +97,5 @@
 
     </LinearLayout>
 
-    <!-- Bottom row: Emoji & Microphone -->
-    <LinearLayout
-        android:id="@+id/row_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="8dp"
-        android:paddingTop="4dp">
-
-        <ImageView
-            android:id="@+id/btn_emoji"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            android:src="@drawable/ic_emoji"
-            android:contentDescription="Emoji" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/btn_mic"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            android:src="@drawable/ic_microphone"
-            android:contentDescription="Microphone" />
-
-    </LinearLayout>
 
 </LinearLayout>
