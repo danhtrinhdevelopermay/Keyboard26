@@ -14,6 +14,7 @@ import android.view.inputmethod.InputConnection
 import android.widget.Toast
 import com.ios26keyboard.model.KeyboardMode
 import com.ios26keyboard.utils.VietnameseInputProcessor
+import com.ios26keyboard.utils.WordSuggestionHelper
 import com.ios26keyboard.view.KeyboardView
 
 class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedListener {
@@ -22,6 +23,7 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     private var currentWord = StringBuilder()
     private var isVietnameseMode = true
     private val vietnameseProcessor = VietnameseInputProcessor()
+    private val suggestionHelper = WordSuggestionHelper()
     
     companion object {
         private const val PREFS_NAME = "iOS26KeyboardPrefs"
@@ -228,42 +230,27 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
         } catch (e: Exception) {
         }
     }
-
-    private fun updateSuggestions() {
-        val suggestions = generateSuggestions(currentWord.toString())
-        keyboardView?.updateSuggestions(suggestions)
+    
+    override fun onSuggestionSelected(suggestion: String) {
+        val inputConnection = currentInputConnection ?: return
+        
+        val currentWordLength = currentWord.length
+        if (currentWordLength > 0) {
+            inputConnection.deleteSurroundingText(currentWordLength, 0)
+        }
+        
+        inputConnection.commitText(suggestion + " ", 1)
+        
+        currentWord.clear()
+        updateSuggestions()
     }
 
-    private fun generateSuggestions(text: String): List<String> {
-        if (text.isEmpty()) {
-            return if (isVietnameseMode) {
-                listOf("Xin", "Chào", "Cảm ơn")
-            } else {
-                listOf("I", "The", "Hello")
-            }
-        }
-
-        val lastWord = text.lowercase()
-        
-        return if (isVietnameseMode) {
-            when {
-                lastWord.startsWith("xi") -> listOf("Xin", "Xin chào", "Xin lỗi")
-                lastWord.startsWith("ch") -> listOf("Chào", "Cho", "Chúc")
-                lastWord.startsWith("ca") -> listOf("Cảm ơn", "Cám ơn", "Các")
-                lastWord.startsWith("to") -> listOf("Tôi", "Tốt", "Tổng")
-                lastWord.startsWith("ba") -> listOf("Bạn", "Bao", "Bằng")
-                else -> listOf("và", "là", "có")
-            }
-        } else {
-            when {
-                lastWord.startsWith("hel") -> listOf("Hello", "Help", "Hello!")
-                lastWord.startsWith("tha") -> listOf("Thanks", "That", "Thank you")
-                lastWord.startsWith("wha") -> listOf("What", "What's", "Whatever")
-                lastWord.startsWith("how") -> listOf("How", "How's", "However")
-                lastWord.startsWith("the") -> listOf("The", "They", "There")
-                lastWord.startsWith("go") -> listOf("Good", "Going", "Got")
-                else -> listOf("the", "and", "to")
-            }
-        }
+    private fun updateSuggestions() {
+        val suggestions = suggestionHelper.getSuggestions(
+            currentWord.toString(),
+            isVietnameseMode,
+            3
+        )
+        keyboardView?.updateSuggestions(suggestions)
     }
 }

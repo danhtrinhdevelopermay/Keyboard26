@@ -51,6 +51,7 @@ class KeyboardView @JvmOverloads constructor(
         fun onLanguageSwitch()
         fun onEmojiPressed()
         fun onMicPressed()
+        fun onSuggestionSelected(suggestion: String)
     }
 
     init {
@@ -65,6 +66,37 @@ class KeyboardView @JvmOverloads constructor(
         row3 = findViewById(R.id.row_3)
         row4 = findViewById(R.id.row_4)
         suggestionBar = findViewById(R.id.suggestion_bar)
+        
+        setupSuggestionClickListeners()
+    }
+    
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupSuggestionClickListeners() {
+        for (i in 0 until suggestionBar.childCount) {
+            val suggestionView = suggestionBar.getChildAt(i) as? TextView ?: continue
+            suggestionView.setOnTouchListener { view, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        KeyAnimationHelper.animateKeyPress(view)
+                        HapticHelper.performKeyPressHaptic(view)
+                        true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        KeyAnimationHelper.animateKeyRelease(view)
+                        val text = (view as? TextView)?.text?.toString()
+                        if (!text.isNullOrEmpty()) {
+                            keyListener?.onSuggestionSelected(text)
+                        }
+                        true
+                    }
+                    MotionEvent.ACTION_CANCEL -> {
+                        KeyAnimationHelper.animateKeyRelease(view)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
     }
 
     private fun setupKeyboard() {
