@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.iOS26Keyboard" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.iOS26Keyboard" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/accent_blue</item>
-        <item name="colorPrimaryVariant">@color/accent_blue_light</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="android:windowBackground">@color/keyboard_bg_light</item>
+        <item name="colorPrimaryDark">@color/accent_blue</item>
+        <item name="colorAccent">@color/accent_blue</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
     
     <style name="KeyStyle">

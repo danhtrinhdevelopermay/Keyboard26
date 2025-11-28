@@ -14,23 +14,25 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupViews()
+        checkKeyboardStatus()
+    }
 
-        findViewById<Button>(R.id.btn_enable_keyboard).setOnClickListener {
+    private fun setupViews() {
+        findViewById<Button>(R.id.btn_enable_keyboard)?.setOnClickListener {
             openKeyboardSettings()
         }
 
-        findViewById<Button>(R.id.btn_select_keyboard).setOnClickListener {
+        findViewById<Button>(R.id.btn_select_keyboard)?.setOnClickListener {
             showKeyboardPicker()
         }
 
-        findViewById<Button>(R.id.btn_test_keyboard).setOnClickListener {
+        findViewById<Button>(R.id.btn_test_keyboard)?.setOnClickListener {
             val editText = findViewById<EditText>(R.id.edit_test)
-            editText.requestFocus()
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+            editText?.requestFocus()
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }
-
-        checkKeyboardStatus()
     }
 
     private fun openKeyboardSettings() {

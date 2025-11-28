@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="keyboard_bg_light">#CC1B1B1F</color>
+    <color name="key_bg_light">#FF2C2C31</color>
+    <color name="key_text_light">#FFEDEDED</color>
+    <color name="key_special_bg_light">#FF3A3A3F</color>
+    <color name="key_pressed_light">#FF0A84FF</color>
+    <color name="gradient_top_light">#FF222228</color>
+    <color name="gradient_bottom_light">#FF1A1A1E</color>
+    <color name="suggestion_bg_light">#30FFFFFF</color>
+</resources>
