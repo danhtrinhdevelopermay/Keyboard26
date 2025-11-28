@@ -530,9 +530,7 @@ class KeyboardView @JvmOverloads constructor(
     }
 
     private fun refreshKeyboard() {
-        KeyAnimationHelper.animateModeSwitch(this) {
-            setupKeyboard()
-        }
+        setupKeyboard()
     }
     
     private fun refreshKeyboardInstant() {
@@ -540,9 +538,7 @@ class KeyboardView @JvmOverloads constructor(
     }
     
     private fun refreshKeyboardSmooth() {
-        KeyAnimationHelper.animateLanguageSwitch(this) {
-            setupKeyboard()
-        }
+        setupKeyboard()
     }
 
     private fun getKeyTextColor(): Int {
