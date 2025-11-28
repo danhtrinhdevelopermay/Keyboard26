@@ -18,6 +18,7 @@
     
     <!-- Accent Colors -->
     <color name="accent_blue">#FF007AFF</color>
+    <color name="accent_blue_light">#FF5AC8FA</color>
     <color name="ripple_light">#30007AFF</color>
     
     <!-- Common Colors -->
