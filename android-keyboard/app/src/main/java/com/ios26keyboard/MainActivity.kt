@@ -54,14 +54,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkKeyboardStatus() {
-        val enabledInputMethods = Settings.Secure.getString(
-            contentResolver,
-            Settings.Secure.ENABLED_INPUT_METHODS
-        )
+        try {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            val enabledInputMethods = imm.enabledInputMethodList
+            val isEnabled = enabledInputMethods.any { 
+                it.packageName == packageName || it.packageName == "$packageName.debug"
+            }
 
-        val isEnabled = enabledInputMethods?.contains(packageName) == true
-
-        if (!isEnabled) {
+            if (!isEnabled) {
+                Toast.makeText(
+                    this,
+                    "Vui lòng bật iOS 26 Keyboard trong cài đặt",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        } catch (e: Exception) {
             Toast.makeText(
                 this,
                 "Vui lòng bật iOS 26 Keyboard trong cài đặt",
