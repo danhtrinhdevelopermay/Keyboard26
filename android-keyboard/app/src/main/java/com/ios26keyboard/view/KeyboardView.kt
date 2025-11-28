@@ -16,6 +16,7 @@ import com.ios26keyboard.R
 import com.ios26keyboard.model.*
 import com.ios26keyboard.utils.HapticHelper
 import com.ios26keyboard.utils.KeyAnimationHelper
+import com.ios26keyboard.utils.KeyPopupHelper
 
 class KeyboardView @JvmOverloads constructor(
     context: Context,
@@ -32,6 +33,7 @@ class KeyboardView @JvmOverloads constructor(
     private lateinit var row4: LinearLayout
     
     private val accentPopup = AccentPopupView(context)
+    private val keyPopup = KeyPopupHelper(context)
     private val longPressHandler = Handler(Looper.getMainLooper())
     private var longPressRunnable: Runnable? = null
     private var isLongPressActive = false
@@ -342,10 +344,13 @@ class KeyboardView @JvmOverloads constructor(
                         HapticHelper.performKeyPressHaptic(view)
                         keyboardView.isLongPressActive = false
                         
+                        keyboardView.keyPopup.show(view, text.toString())
+                        
                         if (keyboardView.accentPopup.hasAccents(keyChar)) {
                             keyboardView.longPressRunnable = Runnable {
                                 keyboardView.isLongPressActive = true
                                 HapticHelper.performKeyPressHaptic(view)
+                                keyboardView.keyPopup.dismiss()
                                 keyboardView.accentPopup.show(view, keyChar) { accent ->
                                     keyboardView.keyListener?.onKeyPressed(accent)
                                     if (keyboardView.keyboardState.shiftState == ShiftState.ON) {
@@ -378,6 +383,7 @@ class KeyboardView @JvmOverloads constructor(
                     }
                     MotionEvent.ACTION_UP -> {
                         KeyAnimationHelper.animateKeyRelease(view)
+                        keyboardView.keyPopup.dismiss()
                         keyboardView.longPressRunnable?.let { 
                             keyboardView.longPressHandler.removeCallbacks(it) 
                         }
@@ -397,6 +403,7 @@ class KeyboardView @JvmOverloads constructor(
                     }
                     MotionEvent.ACTION_CANCEL -> {
                         KeyAnimationHelper.animateKeyRelease(view)
+                        keyboardView.keyPopup.dismiss()
                         keyboardView.longPressRunnable?.let { 
                             keyboardView.longPressHandler.removeCallbacks(it) 
                         }
