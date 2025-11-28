@@ -176,7 +176,7 @@ class KeyboardView @JvmOverloads constructor(
             
             textSize = 22f
             gravity = android.view.Gravity.CENTER
-            setTextColor(keyboardView.getKeyTextColor())
+            setTextColor(ContextCompat.getColor(context, R.color.white))
             background = ContextCompat.getDrawable(context, R.drawable.key_background)
             elevation = 1f
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
@@ -265,7 +265,7 @@ class KeyboardView @JvmOverloads constructor(
             text = "space"
             textSize = 15f
             gravity = android.view.Gravity.CENTER
-            setTextColor(keyboardView.getKeyTextColor())
+            setTextColor(ContextCompat.getColor(context, R.color.white))
             background = ContextCompat.getDrawable(context, R.drawable.key_background)
             elevation = 1f
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)

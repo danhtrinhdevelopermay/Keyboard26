@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Light Mode Colors - iOS Style -->
-    <color name="keyboard_bg_light">#99C8C8CC</color>
-    <color name="key_bg_light">#E6FFFFFF</color>
-    <color name="key_text_light">#FF000000</color>
-    <color name="key_special_bg_light">#CC6D6D70</color>
+    <!-- iOS 26 Style Dark Keyboard Colors -->
+    <!-- Keyboard background - semi-transparent for blur effect -->
+    <color name="keyboard_bg_light">#80232326</color>
+    <color name="key_bg_light">#99424247</color>
+    <color name="key_text_light">#FFFFFFFF</color>
+    <color name="key_special_bg_light">#99323235</color>
     <color name="key_pressed_light">#FF007AFF</color>
     <color name="suggestion_bg_light">#00000000</color>
     
-    <!-- Dark Mode Colors - iOS Style -->
-    <color name="keyboard_bg_dark">#802C2C2E</color>
-    <color name="key_bg_dark">#99FFFFFF</color>
-    <color name="key_text_dark">#FF000000</color>
-    <color name="key_special_bg_dark">#CC454548</color>
+    <!-- Dark Mode Colors - iOS 26 Style -->
+    <color name="keyboard_bg_dark">#80232326</color>
+    <color name="key_bg_dark">#99424247</color>
+    <color name="key_text_dark">#FFFFFFFF</color>
+    <color name="key_special_bg_dark">#99323235</color>
     <color name="key_pressed_dark">#FF0A84FF</color>
     <color name="suggestion_bg_dark">#00000000</color>
     
     <!-- Accent Colors -->
     <color name="accent_blue">#FF007AFF</color>
     <color name="accent_blue_light">#FF5AC8FA</color>
-    <color name="ripple_light">#30007AFF</color>
+    <color name="ripple_light">#50007AFF</color>
+    
+    <!-- Search/Return button -->
+    <color name="search_key_bg">#CC8E8E93</color>
     
     <!-- Common Colors -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="transparent">#00000000</color>
+    
+    <!-- Suggestion text color -->
+    <color name="suggestion_text">#FFFFFFFF</color>
 </resources>

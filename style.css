@@ -5,19 +5,23 @@
 }
 
 :root {
-    --keyboard-bg-light: rgba(242, 242, 245, 0.88);
-    --key-bg-light: rgba(255, 255, 255, 0.95);
-    --key-text-light: #000000;
-    --key-special-bg-light: rgba(173, 181, 189, 0.9);
-    --gradient-top-light: #F7F7F9;
-    --gradient-bottom-light: #E4E4E7;
+    /* iOS 26 Style - Dark keyboard with blur */
+    --keyboard-bg-light: rgba(35, 35, 38, 0.5);
+    --key-bg-light: rgba(66, 66, 71, 0.6);
+    --key-text-light: #FFFFFF;
+    --key-special-bg-light: rgba(50, 50, 53, 0.6);
+    --gradient-top-light: #232326;
+    --gradient-bottom-light: #1A1A1E;
     
-    --keyboard-bg-dark: rgba(27, 27, 31, 0.85);
-    --key-bg-dark: rgba(44, 44, 49, 0.95);
-    --key-text-dark: #EDEDED;
-    --key-special-bg-dark: rgba(58, 58, 63, 0.95);
+    --keyboard-bg-dark: rgba(35, 35, 38, 0.5);
+    --key-bg-dark: rgba(66, 66, 71, 0.6);
+    --key-text-dark: #FFFFFF;
+    --key-special-bg-dark: rgba(50, 50, 53, 0.6);
     --gradient-top-dark: #222228;
     --gradient-bottom-dark: #1A1A1E;
+    
+    /* Search/Return button */
+    --search-key-bg: rgba(142, 142, 147, 0.8);
     
     --accent-blue: #007AFF;
     --accent-blue-light: #5AC8FA;
@@ -264,7 +268,7 @@ body {
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
     z-index: 2;
 }
 
@@ -291,7 +295,7 @@ body {
     align-items: center;
     height: 42px;
     margin: 0 3px;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 22px;
     font-weight: 400;
     cursor: pointer;
@@ -306,7 +310,7 @@ body {
 .key.letter {
     background: var(--key-bg-light);
     color: var(--key-text-light);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .keyboard.dark-mode .key.letter {
@@ -320,7 +324,7 @@ body {
     color: var(--key-text-light);
     font-size: 14px;
     font-weight: 500;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .keyboard.dark-mode .key.special {
@@ -356,13 +360,13 @@ body {
 .key.return {
     flex: 2;
     max-width: 85px;
-    background: var(--key-special-bg-light);
+    background: var(--search-key-bg);
     font-size: 14px;
     font-weight: 500;
 }
 
 .keyboard.dark-mode .key.return {
-    background: var(--key-special-bg-dark);
+    background: var(--search-key-bg);
 }
 
 .key:active, .key.pressed {
@@ -379,8 +383,8 @@ body {
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    background: white;
-    color: black;
+    background: #3a3a3f;
+    color: white;
     width: 52px;
     height: 58px;
     border-radius: 10px;
@@ -440,13 +444,13 @@ body {
 }
 
 .emoji-btn:hover, .mic-btn:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .emoji-btn svg {
     width: 26px;
     height: 26px;
-    fill: #666;
+    fill: #999;
 }
 
 .mic-btn svg {

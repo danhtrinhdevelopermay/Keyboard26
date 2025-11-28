@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark Mode Override - iOS Style Translucent -->
-    <color name="keyboard_bg_light">#802C2C2E</color>
-    <color name="key_bg_light">#99FFFFFF</color>
-    <color name="key_text_light">#FF000000</color>
-    <color name="key_special_bg_light">#CC454548</color>
+    <!-- Dark Mode Override - iOS 26 Style Translucent -->
+    <color name="keyboard_bg_light">#80232326</color>
+    <color name="key_bg_light">#99424247</color>
+    <color name="key_text_light">#FFFFFFFF</color>
+    <color name="key_special_bg_light">#99323235</color>
     <color name="key_pressed_light">#FF0A84FF</color>
     <color name="suggestion_bg_light">#00000000</color>
+    <color name="search_key_bg">#CC8E8E93</color>
 </resources>
