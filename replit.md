@@ -93,9 +93,11 @@ base64 -w 0 release.keystore > keystore_base64.txt
 - Ripple light effect màu xanh lam
 - Elevation tăng khi nhấn
 
-### 3. Light/Dark Mode
-- Light: Nền xám sữa mờ (#F2F2F5)
-- Dark: Nền đen xám (#1B1B1F)
+### 3. iOS 26 Dark Style
+- Phím tối trong suốt (#424247) với chữ trắng
+- Phím đặc biệt màu tối hơn (#323235)
+- Phím Search/Return màu xám sáng (#8E8E93)
+- Nền bán trong suốt (#232326) với blur effect
 - Tự động theo system theme
 
 ### 4. Keyboard Layouts
@@ -134,6 +136,12 @@ base64 -w 0 release.keystore > keystore_base64.txt
 3. Download từ Actions > Artifacts
 
 ## Recent Changes
+- 2025-11-28: Updated to iOS 26 dark keyboard style
+  - Dark semi-transparent keys (#424247) with white text
+  - Special keys with darker background (#323235)
+  - Search/Return key with lighter gray (#8E8E93)
+  - Preserved gaussian blur background effect
+  - Updated web demo with matching dark colors
 - 2025-11-28: Fixed app crash on launch
   - Added missing CardView dependency (cause of InflateException)
   - Changed theme to Theme.AppCompat.DayNight.NoActionBar for better compatibility
