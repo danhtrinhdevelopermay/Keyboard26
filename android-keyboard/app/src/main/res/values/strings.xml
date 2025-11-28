@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">iOS 26 Keyboard</string>
+    <string name="keyboard_name">iOS 26 Keyboard</string>
+    <string name="settings_title">Keyboard Settings</string>
+    <string name="subtype_en_US">English (US)</string>
+    <string name="subtype_vi_VN">Tiếng Việt</string>
+    <string name="space">Space</string>
+    <string name="enter">Enter</string>
+    <string name="delete">Delete</string>
+    <string name="shift">Shift</string>
+    <string name="symbols">123</string>
+    <string name="abc">ABC</string>
+</resources>

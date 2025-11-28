@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light Mode Colors -->
+    <color name="keyboard_bg_light">#E6F2F2F5</color>
+    <color name="key_bg_light">#FFFFFFFF</color>
+    <color name="key_text_light">#FF000000</color>
+    <color name="key_special_bg_light">#FFADB5BD</color>
+    <color name="key_pressed_light">#FF007AFF</color>
+    <color name="gradient_top_light">#FFF7F7F9</color>
+    <color name="gradient_bottom_light">#FFE4E4E7</color>
+    <color name="suggestion_bg_light">#30000000</color>
+    
+    <!-- Dark Mode Colors -->
+    <color name="keyboard_bg_dark">#CC1B1B1F</color>
+    <color name="key_bg_dark">#FF2C2C31</color>
+    <color name="key_text_dark">#FFEDEDED</color>
+    <color name="key_special_bg_dark">#FF3A3A3F</color>
+    <color name="key_pressed_dark">#FF0A84FF</color>
+    <color name="gradient_top_dark">#FF222228</color>
+    <color name="gradient_bottom_dark">#FF1A1A1E</color>
+    <color name="suggestion_bg_dark">#30FFFFFF</color>
+    
+    <!-- Accent Colors -->
+    <color name="accent_blue">#FF007AFF</color>
+    <color name="accent_blue_light">#FF5AC8FA</color>
+    <color name="ripple_light">#203A7BD5</color>
+    <color name="shadow_color">#0F000000</color>
+    
+    <!-- Common Colors -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
+</resources>

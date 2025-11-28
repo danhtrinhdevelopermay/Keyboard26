@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="key_height">52dp</dimen>
+    <dimen name="key_margin">4dp</dimen>
+    <dimen name="key_corner_radius">12dp</dimen>
+    <dimen name="keyboard_padding">4dp</dimen>
+    <dimen name="suggestion_height">44dp</dimen>
+    <dimen name="keyboard_bottom_padding">24dp</dimen>
+</resources>
