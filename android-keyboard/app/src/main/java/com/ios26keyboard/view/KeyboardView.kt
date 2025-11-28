@@ -151,7 +151,10 @@ class KeyboardView @JvmOverloads constructor(
                 resources.getDimensionPixelSize(R.dimen.key_height)
             ).apply {
                 weight = keyData.width
-                setMargins(3, 3, 3, 6)
+                val marginH = resources.getDimensionPixelSize(R.dimen.key_margin_horizontal)
+                val marginV = resources.getDimensionPixelSize(R.dimen.key_margin_vertical)
+                val marginB = resources.getDimensionPixelSize(R.dimen.key_margin_bottom)
+                setMargins(marginH, marginV, marginH, marginB)
             }
 
             text = if (keyboardView.keyboardState.shiftState != ShiftState.OFF) 
@@ -202,7 +205,10 @@ class KeyboardView @JvmOverloads constructor(
                 resources.getDimensionPixelSize(R.dimen.key_height)
             ).apply {
                 this.weight = weight
-                setMargins(3, 3, 3, 6)
+                val marginH = resources.getDimensionPixelSize(R.dimen.key_margin_horizontal)
+                val marginV = resources.getDimensionPixelSize(R.dimen.key_margin_vertical)
+                val marginB = resources.getDimensionPixelSize(R.dimen.key_margin_bottom)
+                setMargins(marginH, marginV, marginH, marginB)
             }
 
             text = label
@@ -247,7 +253,10 @@ class KeyboardView @JvmOverloads constructor(
                 resources.getDimensionPixelSize(R.dimen.key_height)
             ).apply {
                 weight = 4f
-                setMargins(3, 3, 3, 6)
+                val marginH = resources.getDimensionPixelSize(R.dimen.key_margin_horizontal)
+                val marginV = resources.getDimensionPixelSize(R.dimen.key_margin_vertical)
+                val marginB = resources.getDimensionPixelSize(R.dimen.key_margin_bottom)
+                setMargins(marginH, marginV, marginH, marginB)
             }
 
             text = if (keyboardView.keyboardState.isVietnameseMode) "Tiếng Việt" else "English"
