@@ -6,7 +6,6 @@
 - Animation khi nhấn phím
 - Hỗ trợ Light Mode và Dark Mode
 - Bố cục QWERTY, số, và ký tự đặc biệt
-- Gợi ý từ thông minh
 
 ## Project Structure
 
@@ -136,6 +135,10 @@ base64 -w 0 release.keystore > keystore_base64.txt
 3. Download từ Actions > Artifacts
 
 ## Recent Changes
+- 2025-11-28: Removed word suggestion feature
+  - Removed suggestion bar from keyboard layout
+  - Removed WordSuggestionHelper.kt class
+  - Removed all updateSuggestions() calls
 - 2025-11-28: Added Vietnamese Telex input method
   - f = huyền, s = sắc, r = hỏi, x = ngã, j = nặng
   - w = ư/ơ/ă (for u/o/a vowels)

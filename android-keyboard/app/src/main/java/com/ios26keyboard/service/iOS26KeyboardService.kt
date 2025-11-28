@@ -14,7 +14,6 @@ import android.view.inputmethod.InputConnection
 import android.widget.Toast
 import com.ios26keyboard.model.KeyboardMode
 import com.ios26keyboard.utils.VietnameseInputProcessor
-import com.ios26keyboard.utils.WordSuggestionHelper
 import com.ios26keyboard.view.KeyboardView
 
 class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedListener {
@@ -23,7 +22,6 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     private var currentWord = StringBuilder()
     private var isVietnameseMode = true
     private val vietnameseProcessor = VietnameseInputProcessor()
-    private val suggestionHelper = WordSuggestionHelper()
     
     companion object {
         private const val PREFS_NAME = "iOS26KeyboardPrefs"
@@ -112,7 +110,6 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         currentWord.clear()
-        updateSuggestions()
         keyboardView?.updateLanguageIndicator(isVietnameseMode)
         updateReturnKeyLabel(info)
     }
@@ -142,7 +139,6 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
         if (key.length != 1) {
             inputConnection.commitText(key, 1)
             currentWord.append(key)
-            updateSuggestions()
             return
         }
         
@@ -162,14 +158,12 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
                 }
                 inputConnection.commitText(result.text, 1)
                 currentWord.append(result.text)
-                updateSuggestions()
                 return
             }
         }
         
         inputConnection.commitText(key, 1)
         currentWord.append(key)
-        updateSuggestions()
     }
 
     override fun onDeletePressed() {
@@ -185,7 +179,6 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
             inputConnection.commitText("", 1)
             currentWord.clear()
         }
-        updateSuggestions()
     }
 
     override fun onEnterPressed() {
@@ -219,14 +212,12 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
                 )
             }
         }
-        updateSuggestions()
     }
 
     override fun onSpacePressed() {
         val inputConnection = currentInputConnection ?: return
         inputConnection.commitText(" ", 1)
         currentWord.clear()
-        updateSuggestions()
     }
 
     override fun onShiftPressed() {
@@ -263,17 +254,6 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     }
     
     override fun onSuggestionSelected(suggestion: String) {
-        val inputConnection = currentInputConnection ?: return
-        
-        val currentWordLength = currentWord.length
-        if (currentWordLength > 0) {
-            inputConnection.deleteSurroundingText(currentWordLength, 0)
-        }
-        
-        inputConnection.commitText(suggestion + " ", 1)
-        
-        currentWord.clear()
-        updateSuggestions()
     }
     
     override fun onCursorMove(direction: Int) {
@@ -289,12 +269,4 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
         }
     }
 
-    private fun updateSuggestions() {
-        val suggestions = suggestionHelper.getSuggestions(
-            currentWord.toString(),
-            isVietnameseMode,
-            3
-        )
-        keyboardView?.updateSuggestions(suggestions)
-    }
 }

@@ -30,7 +30,6 @@ class KeyboardView @JvmOverloads constructor(
     private lateinit var row2: LinearLayout
     private lateinit var row3: LinearLayout
     private lateinit var row4: LinearLayout
-    private lateinit var suggestionBar: LinearLayout
     
     private val accentPopup = AccentPopupView(context)
     private val longPressHandler = Handler(Looper.getMainLooper())
@@ -80,40 +79,8 @@ class KeyboardView @JvmOverloads constructor(
         row2 = findViewById(R.id.row_2)
         row3 = findViewById(R.id.row_3)
         row4 = findViewById(R.id.row_4)
-        suggestionBar = findViewById(R.id.suggestion_bar)
-        
-        setupSuggestionClickListeners()
     }
     
-    @SuppressLint("ClickableViewAccessibility")
-    private fun setupSuggestionClickListeners() {
-        for (i in 0 until suggestionBar.childCount) {
-            val suggestionView = suggestionBar.getChildAt(i) as? TextView ?: continue
-            suggestionView.setOnTouchListener { view, event ->
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        KeyAnimationHelper.animateKeyPress(view)
-                        HapticHelper.performKeyPressHaptic(view)
-                        true
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        KeyAnimationHelper.animateKeyRelease(view)
-                        val text = (view as? TextView)?.text?.toString()
-                        if (!text.isNullOrEmpty()) {
-                            keyListener?.onSuggestionSelected(text)
-                        }
-                        true
-                    }
-                    MotionEvent.ACTION_CANCEL -> {
-                        KeyAnimationHelper.animateKeyRelease(view)
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }
-    }
-
     private fun setupKeyboard() {
         when (keyboardState.mode) {
             KeyboardMode.LETTERS -> setupLettersKeyboard()
@@ -529,16 +496,6 @@ class KeyboardView @JvmOverloads constructor(
         refreshKeyboardInstant()
     }
 
-    fun updateSuggestions(suggestions: List<String>) {
-        val suggestion1 = suggestionBar.getChildAt(0) as? TextView
-        val suggestion2 = suggestionBar.getChildAt(1) as? TextView
-        val suggestion3 = suggestionBar.getChildAt(2) as? TextView
-
-        suggestion1?.text = suggestions.getOrNull(0) ?: ""
-        suggestion2?.text = suggestions.getOrNull(1) ?: ""
-        suggestion3?.text = suggestions.getOrNull(2) ?: ""
-    }
-    
     fun updateLanguageIndicator(isVietnamese: Boolean) {
         keyboardState.isVietnameseMode = isVietnamese
         refreshKeyboardSmooth()
