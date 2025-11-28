@@ -96,6 +96,19 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
         currentWord.clear()
         updateSuggestions()
         keyboardView?.updateLanguageIndicator(isVietnameseMode)
+        updateReturnKeyLabel(info)
+    }
+    
+    private fun updateReturnKeyLabel(info: EditorInfo?) {
+        val label = when (info?.imeOptions?.and(EditorInfo.IME_MASK_ACTION)) {
+            EditorInfo.IME_ACTION_SEARCH -> KeyboardView.RETURN_KEY_SEARCH
+            EditorInfo.IME_ACTION_SEND -> KeyboardView.RETURN_KEY_SEND
+            EditorInfo.IME_ACTION_GO -> KeyboardView.RETURN_KEY_GO
+            EditorInfo.IME_ACTION_NEXT -> KeyboardView.RETURN_KEY_NEXT
+            EditorInfo.IME_ACTION_DONE -> KeyboardView.RETURN_KEY_DONE
+            else -> KeyboardView.RETURN_KEY_RETURN
+        }
+        keyboardView?.updateReturnKeyLabel(label)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

@@ -36,9 +36,17 @@ class KeyboardView @JvmOverloads constructor(
     private val longPressHandler = Handler(Looper.getMainLooper())
     private var longPressRunnable: Runnable? = null
     private var isLongPressActive = false
+    private var returnKeyLabel = "return"
     
     companion object {
         private const val LONG_PRESS_DELAY = 300L
+        
+        const val RETURN_KEY_RETURN = "return"
+        const val RETURN_KEY_SEARCH = "Search"
+        const val RETURN_KEY_SEND = "Send"
+        const val RETURN_KEY_GO = "Go"
+        const val RETURN_KEY_NEXT = "Next"
+        const val RETURN_KEY_DONE = "Done"
     }
 
     interface OnKeyPressedListener {
@@ -130,7 +138,7 @@ class KeyboardView @JvmOverloads constructor(
         row4.addView(createSpecialKeyView("123", "numbers", 1.2f))
         row4.addView(createSpecialKeyView("🌐", "globe", 1f))
         row4.addView(createSpaceKeyView())
-        row4.addView(createSpecialKeyView("Search", "return", 2f))
+        row4.addView(createReturnKeyView())
     }
 
     private fun setupNumbersKeyboard() {
@@ -156,7 +164,7 @@ class KeyboardView @JvmOverloads constructor(
         row4.addView(createSpecialKeyView("ABC", "letters", 1.2f))
         row4.addView(createSpecialKeyView("🌐", "globe", 1f))
         row4.addView(createSpaceKeyView())
-        row4.addView(createSpecialKeyView("Return", "return", 2f))
+        row4.addView(createReturnKeyView())
     }
 
     private fun setupSymbolsKeyboard() {
@@ -182,7 +190,52 @@ class KeyboardView @JvmOverloads constructor(
         row4.addView(createSpecialKeyView("ABC", "letters", 1.2f))
         row4.addView(createSpecialKeyView("🌐", "globe", 1f))
         row4.addView(createSpaceKeyView())
-        row4.addView(createSpecialKeyView("Return", "return", 2f))
+        row4.addView(createReturnKeyView())
+    }
+    
+    @SuppressLint("ClickableViewAccessibility")
+    private fun createReturnKeyView(): TextView {
+        val keyboardView = this@KeyboardView
+        return TextView(context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                0,
+                resources.getDimensionPixelSize(R.dimen.key_height)
+            ).apply {
+                weight = 2f
+                val marginH = resources.getDimensionPixelSize(R.dimen.key_margin_horizontal)
+                val marginV = resources.getDimensionPixelSize(R.dimen.key_margin_vertical)
+                val marginB = resources.getDimensionPixelSize(R.dimen.key_margin_bottom)
+                setMargins(marginH, marginV, marginH, marginB)
+            }
+
+            text = keyboardView.returnKeyLabel
+            textSize = if (keyboardView.returnKeyLabel.length > 4) 14f else 16f
+            gravity = android.view.Gravity.CENTER
+            setTextColor(ContextCompat.getColor(context, R.color.white))
+            background = ContextCompat.getDrawable(context, R.drawable.search_key_background)
+            elevation = 1f
+            typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+
+            setOnTouchListener { view, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        KeyAnimationHelper.animateKeyPress(view)
+                        HapticHelper.performKeyPressHaptic(view)
+                        true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        KeyAnimationHelper.animateKeyRelease(view)
+                        keyboardView.keyListener?.onEnterPressed()
+                        true
+                    }
+                    MotionEvent.ACTION_CANCEL -> {
+                        KeyAnimationHelper.animateKeyRelease(view)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -449,5 +502,10 @@ class KeyboardView @JvmOverloads constructor(
     fun updateLanguageIndicator(isVietnamese: Boolean) {
         keyboardState.isVietnameseMode = isVietnamese
         refreshKeyboardSmooth()
+    }
+    
+    fun updateReturnKeyLabel(label: String) {
+        returnKeyLabel = label
+        refreshKeyboardInstant()
     }
 }
