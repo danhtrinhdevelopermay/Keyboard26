@@ -298,7 +298,7 @@ class KeyboardView @JvmOverloads constructor(
                     ShiftState.CAPS_LOCK -> ShiftState.OFF
                 }
                 keyListener?.onShiftPressed()
-                refreshKeyboard()
+                refreshKeyboardInstant()
             }
             "delete" -> keyListener?.onDeletePressed()
             "return" -> keyListener?.onEnterPressed()
@@ -326,6 +326,16 @@ class KeyboardView @JvmOverloads constructor(
             setupKeyboard()
         }
     }
+    
+    private fun refreshKeyboardInstant() {
+        setupKeyboard()
+    }
+    
+    private fun refreshKeyboardSmooth() {
+        KeyAnimationHelper.animateLanguageSwitch(this) {
+            setupKeyboard()
+        }
+    }
 
     private fun getKeyTextColor(): Int {
         return ContextCompat.getColor(
@@ -340,7 +350,7 @@ class KeyboardView @JvmOverloads constructor(
 
     fun setDarkMode(isDark: Boolean) {
         keyboardState.isDarkMode = isDark
-        refreshKeyboard()
+        refreshKeyboardInstant()
     }
 
     fun updateSuggestions(suggestions: List<String>) {
@@ -355,6 +365,6 @@ class KeyboardView @JvmOverloads constructor(
     
     fun updateLanguageIndicator(isVietnamese: Boolean) {
         keyboardState.isVietnameseMode = isVietnamese
-        refreshKeyboard()
+        refreshKeyboardSmooth()
     }
 }
