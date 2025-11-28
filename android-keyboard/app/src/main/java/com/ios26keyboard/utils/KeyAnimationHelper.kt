@@ -13,20 +13,16 @@ import com.ios26keyboard.R
 
 object KeyAnimationHelper {
 
-    private const val PRESS_DURATION = 80L
-    private const val RELEASE_DURATION = 140L
-    private const val RIPPLE_DURATION = 100L
-    private const val MODE_SWITCH_DURATION = 150L
+    private const val PRESS_DURATION = 30L
+    private const val RELEASE_DURATION = 60L
+    private const val RIPPLE_DURATION = 50L
+    private const val MODE_SWITCH_DURATION = 80L
 
     fun animateKeyPress(view: View) {
         view.animate().cancel()
-        view.animate()
-            .alpha(0.6f)
-            .scaleX(0.95f)
-            .scaleY(0.95f)
-            .setDuration(PRESS_DURATION)
-            .setInterpolator(AccelerateDecelerateInterpolator())
-            .start()
+        view.alpha = 0.7f
+        view.scaleX = 0.97f
+        view.scaleY = 0.97f
     }
 
     fun animateKeyRelease(view: View) {

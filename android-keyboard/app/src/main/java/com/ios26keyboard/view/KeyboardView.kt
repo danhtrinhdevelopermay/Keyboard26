@@ -255,20 +255,41 @@ class KeyboardView @JvmOverloads constructor(
             elevation = 1f
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
 
+            var startX = 0f
+            var startY = 0f
+            var keyPressed = false
+            
             setOnTouchListener { view, event ->
+                val slop = 50f
+                
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        startX = event.x
+                        startY = event.y
+                        keyPressed = true
                         KeyAnimationHelper.animateKeyPress(view)
                         HapticHelper.performKeyPressHaptic(view)
                         true
                     }
+                    MotionEvent.ACTION_MOVE -> {
+                        val dx = kotlin.math.abs(event.x - startX)
+                        val dy = kotlin.math.abs(event.y - startY)
+                        if (dx > slop || dy > slop) {
+                            keyPressed = false
+                        }
+                        true
+                    }
                     MotionEvent.ACTION_UP -> {
                         KeyAnimationHelper.animateKeyRelease(view)
-                        keyboardView.keyListener?.onEnterPressed()
+                        if (keyPressed) {
+                            keyboardView.keyListener?.onEnterPressed()
+                        }
+                        keyPressed = false
                         true
                     }
                     MotionEvent.ACTION_CANCEL -> {
                         KeyAnimationHelper.animateKeyRelease(view)
+                        keyPressed = false
                         true
                     }
                     else -> false
@@ -304,11 +325,19 @@ class KeyboardView @JvmOverloads constructor(
             elevation = 1f
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
 
+            var startX = 0f
+            var startY = 0f
+            var keyPressed = false
+            
             setOnTouchListener { view, event ->
                 val keyChar = text.toString().firstOrNull() ?: return@setOnTouchListener false
+                val slop = 50f
                 
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        startX = event.x
+                        startY = event.y
+                        keyPressed = true
                         KeyAnimationHelper.animateKeyPress(view)
                         HapticHelper.performKeyPressHaptic(view)
                         keyboardView.isLongPressActive = false
@@ -335,6 +364,15 @@ class KeyboardView @JvmOverloads constructor(
                     MotionEvent.ACTION_MOVE -> {
                         if (keyboardView.isLongPressActive && keyboardView.accentPopup.isShowing()) {
                             keyboardView.accentPopup.updateSelection(view, event.x)
+                        } else {
+                            val dx = kotlin.math.abs(event.x - startX)
+                            val dy = kotlin.math.abs(event.y - startY)
+                            if (dx > slop || dy > slop) {
+                                keyPressed = false
+                                keyboardView.longPressRunnable?.let { 
+                                    keyboardView.longPressHandler.removeCallbacks(it) 
+                                }
+                            }
                         }
                         true
                     }
@@ -346,7 +384,7 @@ class KeyboardView @JvmOverloads constructor(
                         
                         if (keyboardView.isLongPressActive && keyboardView.accentPopup.isShowing()) {
                             keyboardView.accentPopup.confirmSelection()
-                        } else {
+                        } else if (keyPressed) {
                             keyboardView.keyListener?.onKeyPressed(text.toString())
                             if (keyboardView.keyboardState.shiftState == ShiftState.ON) {
                                 keyboardView.keyboardState.shiftState = ShiftState.OFF
@@ -354,6 +392,7 @@ class KeyboardView @JvmOverloads constructor(
                             }
                         }
                         keyboardView.isLongPressActive = false
+                        keyPressed = false
                         true
                     }
                     MotionEvent.ACTION_CANCEL -> {
@@ -363,6 +402,7 @@ class KeyboardView @JvmOverloads constructor(
                         }
                         keyboardView.accentPopup.dismiss()
                         keyboardView.isLongPressActive = false
+                        keyPressed = false
                         true
                     }
                     else -> false
@@ -397,20 +437,41 @@ class KeyboardView @JvmOverloads constructor(
             elevation = 1f
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
 
+            var startX = 0f
+            var startY = 0f
+            var keyPressed = false
+            
             setOnTouchListener { view, event ->
+                val slop = 50f
+                
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        startX = event.x
+                        startY = event.y
+                        keyPressed = true
                         KeyAnimationHelper.animateKeyPress(view)
                         HapticHelper.performKeyPressHaptic(view)
                         true
                     }
+                    MotionEvent.ACTION_MOVE -> {
+                        val dx = kotlin.math.abs(event.x - startX)
+                        val dy = kotlin.math.abs(event.y - startY)
+                        if (dx > slop || dy > slop) {
+                            keyPressed = false
+                        }
+                        true
+                    }
                     MotionEvent.ACTION_UP -> {
                         KeyAnimationHelper.animateKeyRelease(view)
-                        keyboardView.handleSpecialKey(action)
+                        if (keyPressed) {
+                            keyboardView.handleSpecialKey(action)
+                        }
+                        keyPressed = false
                         true
                     }
                     MotionEvent.ACTION_CANCEL -> {
                         KeyAnimationHelper.animateKeyRelease(view)
+                        keyPressed = false
                         true
                     }
                     else -> false
