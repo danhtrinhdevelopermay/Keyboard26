@@ -30,8 +30,15 @@ class VietnameseInputProcessor {
         'j' to ToneType.NANG
     )
     
-    private val baseVowels = setOf('a', 'ă', 'â', 'e', 'ê', 'i', 'o', 'ô', 'ơ', 'u', 'ư', 'y',
-                                    'A', 'Ă', 'Â', 'E', 'Ê', 'I', 'O', 'Ô', 'Ơ', 'U', 'Ư', 'Y')
+    private val allVowels = setOf(
+        'a', 'ă', 'â', 'e', 'ê', 'i', 'o', 'ô', 'ơ', 'u', 'ư', 'y',
+        'A', 'Ă', 'Â', 'E', 'Ê', 'I', 'O', 'Ô', 'Ơ', 'U', 'Ư', 'Y',
+        'à', 'ằ', 'ầ', 'è', 'ề', 'ì', 'ò', 'ồ', 'ờ', 'ù', 'ừ', 'ỳ',
+        'á', 'ắ', 'ấ', 'é', 'ế', 'í', 'ó', 'ố', 'ớ', 'ú', 'ứ', 'ý',
+        'ả', 'ẳ', 'ẩ', 'ẻ', 'ể', 'ỉ', 'ỏ', 'ổ', 'ở', 'ủ', 'ử', 'ỷ',
+        'ã', 'ẵ', 'ẫ', 'ẽ', 'ễ', 'ĩ', 'õ', 'ỗ', 'ỡ', 'ũ', 'ữ', 'ỹ',
+        'ạ', 'ặ', 'ậ', 'ẹ', 'ệ', 'ị', 'ọ', 'ộ', 'ợ', 'ụ', 'ự', 'ỵ'
+    )
     
     private val toneChars = mapOf(
         'a' to mapOf(
@@ -91,6 +98,13 @@ class VietnameseInputProcessor {
             }
         }
     }
+    
+    private val priorityVowels = setOf('ơ', 'ê', 'ô', 'â', 'ă', 'ư')
+    
+    private val consonants = setOf(
+        'b', 'c', 'd', 'đ', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x',
+        'B', 'C', 'D', 'Đ', 'G', 'H', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'X'
+    )
     
     enum class ToneType {
         HUYEN, SAC, HOI, NGA, NANG
@@ -175,24 +189,91 @@ class VietnameseInputProcessor {
     private fun processTone(word: String, toneKey: Char): ProcessResult {
         val tone = toneMap[toneKey] ?: return ProcessResult(toneKey.toString(), 0, false)
         
-        val lastIndex = word.lastIndex
-        for (i in lastIndex downTo maxOf(0, lastIndex - 4)) {
-            val char = word[i]
-            val lowerChar = char.lowercaseChar()
-            
-            val baseVowel = getBaseVowel(lowerChar)
-            if (baseVowel != null) {
-                val tonedChar = toneChars[baseVowel]?.get(tone)
-                if (tonedChar != null) {
-                    val finalChar = if (char.isUpperCase()) tonedChar.uppercaseChar() else tonedChar
-                    val deleteCount = lastIndex - i + 1
-                    val suffix = if (i < lastIndex) word.substring(i + 1) else ""
-                    return ProcessResult(finalChar.toString() + suffix, deleteCount, true)
-                }
+        val vowelPositions = mutableListOf<Int>()
+        for (i in word.indices) {
+            val lowerChar = word[i].lowercaseChar()
+            if (isVowel(lowerChar)) {
+                vowelPositions.add(i)
             }
         }
         
-        return ProcessResult(toneKey.toString(), 0, false)
+        if (vowelPositions.isEmpty()) {
+            return ProcessResult(toneKey.toString(), 0, false)
+        }
+        
+        if (vowelPositions.size == 1) {
+            return applyToneAtPosition(word, vowelPositions[0], tone)
+        }
+        
+        val targetIndex = findTonePosition(word, vowelPositions)
+        return applyToneAtPosition(word, targetIndex, tone)
+    }
+    
+    private fun findTonePosition(word: String, vowelPositions: List<Int>): Int {
+        for (pos in vowelPositions) {
+            val baseVowel = getBaseVowel(word[pos].lowercaseChar())
+            if (baseVowel != null && baseVowel in priorityVowels) {
+                return pos
+            }
+        }
+        
+        val lastVowelPos = vowelPositions.last()
+        val hasTrailingConsonant = (lastVowelPos < word.lastIndex) && 
+            word.substring(lastVowelPos + 1).any { it.lowercaseChar() in consonants }
+        
+        if (vowelPositions.size >= 2) {
+            val lastVowel = getBaseVowel(word[vowelPositions.last()].lowercaseChar())
+            val secondLastVowel = getBaseVowel(word[vowelPositions[vowelPositions.size - 2]].lowercaseChar())
+            
+            if (secondLastVowel == 'o' && lastVowel in setOf('a', 'e')) {
+                return vowelPositions[vowelPositions.size - 2]
+            }
+            
+            if (secondLastVowel == 'u' && lastVowel == 'y') {
+                return vowelPositions[vowelPositions.size - 2]
+            }
+            
+            if (lastVowel in setOf('i', 'u', 'y')) {
+                return vowelPositions[vowelPositions.size - 2]
+            }
+            
+            if (hasTrailingConsonant) {
+                return vowelPositions[vowelPositions.size - 1]
+            }
+        }
+        
+        return if (vowelPositions.size >= 2) {
+            vowelPositions[vowelPositions.size - 2]
+        } else {
+            vowelPositions.last()
+        }
+    }
+    
+    private fun applyToneAtPosition(word: String, position: Int, tone: ToneType): ProcessResult {
+        val char = word[position]
+        val lowerChar = char.lowercaseChar()
+        val baseVowel = getBaseVowel(lowerChar) ?: return ProcessResult(
+            toneMap.entries.find { it.value == tone }?.key?.toString() ?: "", 
+            0, 
+            false
+        )
+        
+        val tonedChar = toneChars[baseVowel]?.get(tone) ?: return ProcessResult(
+            toneMap.entries.find { it.value == tone }?.key?.toString() ?: "", 
+            0, 
+            false
+        )
+        
+        val finalChar = if (char.isUpperCase()) tonedChar.uppercaseChar() else tonedChar
+        val deleteCount = word.length - position
+        val suffix = if (position < word.lastIndex) word.substring(position + 1) else ""
+        
+        return ProcessResult(finalChar.toString() + suffix, deleteCount, true)
+    }
+    
+    private fun isVowel(char: Char): Boolean {
+        val lower = char.lowercaseChar()
+        return lower in allVowels || getBaseVowel(lower) != null
     }
     
     private fun getBaseVowel(char: Char): Char? {
