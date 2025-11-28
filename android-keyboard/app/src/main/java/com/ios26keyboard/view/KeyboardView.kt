@@ -224,7 +224,10 @@ class KeyboardView @JvmOverloads constructor(
             textSize = if (label.length > 3) 15f else 18f
             gravity = android.view.Gravity.CENTER
             setTextColor(ContextCompat.getColor(context, R.color.white))
-            background = ContextCompat.getDrawable(context, R.drawable.special_key_background)
+            background = ContextCompat.getDrawable(
+                context, 
+                if (action == "return") R.drawable.search_key_background else R.drawable.special_key_background
+            )
             elevation = 1f
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
 
