@@ -161,6 +161,7 @@ class KeyboardView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun createKeyView(keyData: KeyData): TextView {
+        val keyboardView = this@KeyboardView
         return TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(
                 0,
@@ -170,14 +171,14 @@ class KeyboardView @JvmOverloads constructor(
                 setMargins(4, 4, 4, 4)
             }
 
-            text = if (keyboardState.shiftState != ShiftState.OFF) 
+            text = if (keyboardView.keyboardState.shiftState != ShiftState.OFF) 
                 keyData.primary.uppercase() 
             else 
                 keyData.primary.lowercase()
             
             textSize = 18f
             gravity = android.view.Gravity.CENTER
-            setTextColor(getKeyTextColor())
+            setTextColor(keyboardView.getKeyTextColor())
             background = ContextCompat.getDrawable(context, R.drawable.key_background)
             elevation = 4f
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
@@ -191,11 +192,11 @@ class KeyboardView @JvmOverloads constructor(
                     }
                     MotionEvent.ACTION_UP -> {
                         KeyAnimationHelper.animateKeyRelease(view)
-                        keyListener?.onKeyPressed(text.toString())
+                        keyboardView.keyListener?.onKeyPressed(text.toString())
                         
-                        if (keyboardState.shiftState == ShiftState.ON) {
-                            keyboardState.shiftState = ShiftState.OFF
-                            refreshKeyboard()
+                        if (keyboardView.keyboardState.shiftState == ShiftState.ON) {
+                            keyboardView.keyboardState.shiftState = ShiftState.OFF
+                            keyboardView.refreshKeyboard()
                         }
                         true
                     }
@@ -211,6 +212,7 @@ class KeyboardView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun createSpecialKeyView(label: String, action: String, weight: Float): TextView {
+        val keyboardView = this@KeyboardView
         return TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(
                 0,
@@ -223,7 +225,7 @@ class KeyboardView @JvmOverloads constructor(
             text = label
             textSize = if (label.length > 3) 14f else 16f
             gravity = android.view.Gravity.CENTER
-            setTextColor(getKeyTextColor())
+            setTextColor(keyboardView.getKeyTextColor())
             background = ContextCompat.getDrawable(context, R.drawable.special_key_background)
             elevation = 4f
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
@@ -237,7 +239,7 @@ class KeyboardView @JvmOverloads constructor(
                     }
                     MotionEvent.ACTION_UP -> {
                         KeyAnimationHelper.animateKeyRelease(view)
-                        handleSpecialKey(action)
+                        keyboardView.handleSpecialKey(action)
                         true
                     }
                     MotionEvent.ACTION_CANCEL -> {
@@ -252,6 +254,7 @@ class KeyboardView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun createSpaceKeyView(): TextView {
+        val keyboardView = this@KeyboardView
         return TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(
                 0,
@@ -264,7 +267,7 @@ class KeyboardView @JvmOverloads constructor(
             text = "space"
             textSize = 14f
             gravity = android.view.Gravity.CENTER
-            setTextColor(getKeyTextColor())
+            setTextColor(keyboardView.getKeyTextColor())
             background = ContextCompat.getDrawable(context, R.drawable.key_background)
             elevation = 4f
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
@@ -278,7 +281,7 @@ class KeyboardView @JvmOverloads constructor(
                     }
                     MotionEvent.ACTION_UP -> {
                         KeyAnimationHelper.animateKeyRelease(view)
-                        keyListener?.onSpacePressed()
+                        keyboardView.keyListener?.onSpacePressed()
                         true
                     }
                     MotionEvent.ACTION_CANCEL -> {
