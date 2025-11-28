@@ -166,7 +166,7 @@ class KeyboardView @JvmOverloads constructor(
                 resources.getDimensionPixelSize(R.dimen.key_height)
             ).apply {
                 weight = keyData.width
-                setMargins(4, 4, 4, 4)
+                setMargins(3, 3, 3, 6)
             }
 
             text = if (keyboardView.keyboardState.shiftState != ShiftState.OFF) 
@@ -174,12 +174,12 @@ class KeyboardView @JvmOverloads constructor(
             else 
                 keyData.primary.lowercase()
             
-            textSize = 18f
+            textSize = 22f
             gravity = android.view.Gravity.CENTER
             setTextColor(keyboardView.getKeyTextColor())
             background = ContextCompat.getDrawable(context, R.drawable.key_background)
-            elevation = 4f
-            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            elevation = 1f
+            typeface = Typeface.create("sans-serif", Typeface.NORMAL)
 
             setOnTouchListener { view, event ->
                 when (event.action) {
@@ -217,16 +217,16 @@ class KeyboardView @JvmOverloads constructor(
                 resources.getDimensionPixelSize(R.dimen.key_height)
             ).apply {
                 this.weight = weight
-                setMargins(4, 4, 4, 4)
+                setMargins(3, 3, 3, 6)
             }
 
             text = label
-            textSize = if (label.length > 3) 14f else 16f
+            textSize = if (label.length > 3) 15f else 16f
             gravity = android.view.Gravity.CENTER
             setTextColor(keyboardView.getKeyTextColor())
             background = ContextCompat.getDrawable(context, R.drawable.special_key_background)
-            elevation = 4f
-            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            elevation = 1f
+            typeface = Typeface.create("sans-serif", Typeface.NORMAL)
 
             setOnTouchListener { view, event ->
                 when (event.action) {
@@ -259,15 +259,15 @@ class KeyboardView @JvmOverloads constructor(
                 resources.getDimensionPixelSize(R.dimen.key_height)
             ).apply {
                 weight = 4f
-                setMargins(4, 4, 4, 4)
+                setMargins(3, 3, 3, 6)
             }
 
             text = "space"
-            textSize = 14f
+            textSize = 15f
             gravity = android.view.Gravity.CENTER
             setTextColor(keyboardView.getKeyTextColor())
             background = ContextCompat.getDrawable(context, R.drawable.key_background)
-            elevation = 4f
+            elevation = 1f
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
 
             setOnTouchListener { view, event ->

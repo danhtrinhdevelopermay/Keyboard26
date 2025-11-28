@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="key_height">52dp</dimen>
-    <dimen name="key_margin">4dp</dimen>
-    <dimen name="key_corner_radius">12dp</dimen>
-    <dimen name="keyboard_padding">4dp</dimen>
-    <dimen name="suggestion_height">44dp</dimen>
-    <dimen name="keyboard_bottom_padding">24dp</dimen>
+    <dimen name="key_height">42dp</dimen>
+    <dimen name="key_margin">3dp</dimen>
+    <dimen name="key_corner_radius">5dp</dimen>
+    <dimen name="keyboard_padding">3dp</dimen>
+    <dimen name="suggestion_height">40dp</dimen>
+    <dimen name="keyboard_bottom_padding">34dp</dimen>
 </resources>

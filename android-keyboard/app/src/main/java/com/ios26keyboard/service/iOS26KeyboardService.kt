@@ -1,10 +1,14 @@
 package com.ios26keyboard.service
 
 import android.content.res.Configuration
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.inputmethodservice.InputMethodService
+import android.os.Build
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import com.ios26keyboard.model.KeyboardMode
@@ -15,6 +19,25 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     private var keyboardView: KeyboardView? = null
     private var currentText = StringBuilder()
 
+    override fun onCreate() {
+        super.onCreate()
+        enableBlurEffect()
+    }
+
+    private fun enableBlurEffect() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            window?.window?.let { window ->
+                window.setBackgroundBlurRadius(40)
+                window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+                window.attributes = window.attributes.apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        blurBehindRadius = 40
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreateInputView(): View {
         keyboardView = KeyboardView(this).apply {
             setKeyListener(this@iOS26KeyboardService)
@@ -22,6 +45,12 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
             val isDarkMode = resources.configuration.uiMode and 
                 Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
             setDarkMode(isDarkMode)
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                setRenderEffect(
+                    RenderEffect.createBlurEffect(0.1f, 0.1f, Shader.TileMode.CLAMP)
+                )
+            }
         }
         return keyboardView!!
     }

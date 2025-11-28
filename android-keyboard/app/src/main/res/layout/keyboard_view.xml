@@ -6,9 +6,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/keyboard_background"
     android:orientation="vertical"
-    android:paddingHorizontal="4dp"
-    android:paddingBottom="24dp"
-    android:paddingTop="8dp">
+    android:paddingHorizontal="3dp"
+    android:paddingBottom="34dp"
+    android:paddingTop="6dp">
 
     <!-- Suggestion Bar -->
     <LinearLayout
