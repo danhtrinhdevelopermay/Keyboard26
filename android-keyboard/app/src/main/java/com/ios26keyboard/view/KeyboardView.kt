@@ -38,8 +38,14 @@ class KeyboardView @JvmOverloads constructor(
     private var isLongPressActive = false
     private var returnKeyLabel = "return"
     
+    private var isTrackpadMode = false
+    private var trackpadStartX = 0f
+    private var lastTrackpadX = 0f
+    private val trackpadThreshold = 20f
+    
     companion object {
         private const val LONG_PRESS_DELAY = 300L
+        private const val TRACKPAD_DELAY = 200L
         
         const val RETURN_KEY_RETURN = "return"
         const val RETURN_KEY_SEARCH = "Search"
@@ -60,6 +66,7 @@ class KeyboardView @JvmOverloads constructor(
         fun onEmojiPressed()
         fun onMicPressed()
         fun onSuggestionSelected(suggestion: String)
+        fun onCursorMove(direction: Int)
     }
 
     init {
@@ -383,6 +390,8 @@ class KeyboardView @JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     private fun createSpaceKeyView(): TextView {
         val keyboardView = this@KeyboardView
+        var spaceTrackpadRunnable: Runnable? = null
+        
         return TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(
                 0,
@@ -408,15 +417,46 @@ class KeyboardView @JvmOverloads constructor(
                     MotionEvent.ACTION_DOWN -> {
                         KeyAnimationHelper.animateKeyPress(view)
                         HapticHelper.performKeyPressHaptic(view)
+                        keyboardView.trackpadStartX = event.rawX
+                        keyboardView.lastTrackpadX = event.rawX
+                        keyboardView.isTrackpadMode = false
+                        
+                        spaceTrackpadRunnable = Runnable {
+                            keyboardView.isTrackpadMode = true
+                            HapticHelper.performKeyPressHaptic(view)
+                        }
+                        keyboardView.longPressHandler.postDelayed(spaceTrackpadRunnable!!, TRACKPAD_DELAY)
+                        true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        if (keyboardView.isTrackpadMode) {
+                            val deltaX = event.rawX - keyboardView.lastTrackpadX
+                            if (kotlin.math.abs(deltaX) >= keyboardView.trackpadThreshold) {
+                                val direction = if (deltaX > 0) 1 else -1
+                                keyboardView.keyListener?.onCursorMove(direction)
+                                keyboardView.lastTrackpadX = event.rawX
+                                HapticHelper.performLightHaptic(view)
+                            }
+                        }
                         true
                     }
                     MotionEvent.ACTION_UP -> {
+                        spaceTrackpadRunnable?.let { 
+                            keyboardView.longPressHandler.removeCallbacks(it) 
+                        }
                         KeyAnimationHelper.animateKeyRelease(view)
-                        keyboardView.keyListener?.onSpacePressed()
+                        if (!keyboardView.isTrackpadMode) {
+                            keyboardView.keyListener?.onSpacePressed()
+                        }
+                        keyboardView.isTrackpadMode = false
                         true
                     }
                     MotionEvent.ACTION_CANCEL -> {
+                        spaceTrackpadRunnable?.let { 
+                            keyboardView.longPressHandler.removeCallbacks(it) 
+                        }
                         KeyAnimationHelper.animateKeyRelease(view)
+                        keyboardView.isTrackpadMode = false
                         true
                     }
                     else -> false

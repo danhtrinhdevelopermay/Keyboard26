@@ -22,6 +22,14 @@ object HapticHelper {
         }
     }
     
+    fun performLightHaptic(view: View) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+        } else {
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+        }
+    }
+    
     fun performLightClick(context: Context) {
         vibrate(context, LIGHT_CLICK_DURATION, VibrationEffect.EFFECT_TICK)
     }

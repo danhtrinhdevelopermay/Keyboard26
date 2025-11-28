@@ -275,6 +275,19 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
         currentWord.clear()
         updateSuggestions()
     }
+    
+    override fun onCursorMove(direction: Int) {
+        val inputConnection = currentInputConnection ?: return
+        
+        val cursorPosition = inputConnection.getExtractedText(
+            android.view.inputmethod.ExtractedTextRequest(), 0
+        )?.selectionStart ?: return
+        
+        val newPosition = cursorPosition + direction
+        if (newPosition >= 0) {
+            inputConnection.setSelection(newPosition, newPosition)
+        }
+    }
 
     private fun updateSuggestions() {
         val suggestions = suggestionHelper.getSuggestions(
