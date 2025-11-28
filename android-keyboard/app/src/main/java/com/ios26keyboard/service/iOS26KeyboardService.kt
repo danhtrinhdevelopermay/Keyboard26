@@ -1,5 +1,6 @@
 package com.ios26keyboard.service
 
+import android.content.Context
 import android.content.res.Configuration
 import android.inputmethodservice.InputMethodService
 import android.os.Build
@@ -10,16 +11,36 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
+import android.widget.Toast
 import com.ios26keyboard.model.KeyboardMode
+import com.ios26keyboard.utils.VietnameseInputProcessor
 import com.ios26keyboard.view.KeyboardView
 
 class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedListener {
 
     private var keyboardView: KeyboardView? = null
-    private var currentText = StringBuilder()
+    private var currentWord = StringBuilder()
+    private var isVietnameseMode = true
+    private val vietnameseProcessor = VietnameseInputProcessor()
+    
+    companion object {
+        private const val PREFS_NAME = "iOS26KeyboardPrefs"
+        private const val KEY_LANGUAGE = "language_mode"
+    }
 
     override fun onCreate() {
         super.onCreate()
+        loadLanguagePreference()
+    }
+    
+    private fun loadLanguagePreference() {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        isVietnameseMode = prefs.getBoolean(KEY_LANGUAGE, true)
+    }
+    
+    private fun saveLanguagePreference() {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putBoolean(KEY_LANGUAGE, isVietnameseMode).apply()
     }
 
     override fun onWindowShown() {
@@ -63,14 +84,16 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
             val isDarkMode = resources.configuration.uiMode and 
                 Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
             setDarkMode(isDarkMode)
+            updateLanguageIndicator(isVietnameseMode)
         }
         return keyboardView!!
     }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
-        currentText.clear()
+        currentWord.clear()
         updateSuggestions()
+        keyboardView?.updateLanguageIndicator(isVietnameseMode)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -82,8 +105,37 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
 
     override fun onKeyPressed(key: String) {
         val inputConnection = currentInputConnection ?: return
+        
+        if (key.length != 1) {
+            inputConnection.commitText(key, 1)
+            currentWord.append(key)
+            updateSuggestions()
+            return
+        }
+        
+        val char = key[0]
+        
+        if (isVietnameseMode && currentWord.isNotEmpty()) {
+            val result = vietnameseProcessor.processKey(currentWord.toString(), char)
+            
+            if (result.isProcessed) {
+                if (result.deleteCount > 0) {
+                    inputConnection.deleteSurroundingText(result.deleteCount, 0)
+                    repeat(result.deleteCount) {
+                        if (currentWord.isNotEmpty()) {
+                            currentWord.deleteCharAt(currentWord.length - 1)
+                        }
+                    }
+                }
+                inputConnection.commitText(result.text, 1)
+                currentWord.append(result.text)
+                updateSuggestions()
+                return
+            }
+        }
+        
         inputConnection.commitText(key, 1)
-        currentText.append(key)
+        currentWord.append(key)
         updateSuggestions()
     }
 
@@ -93,12 +145,12 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
         
         if (TextUtils.isEmpty(selectedText)) {
             inputConnection.deleteSurroundingText(1, 0)
-            if (currentText.isNotEmpty()) {
-                currentText.deleteCharAt(currentText.length - 1)
+            if (currentWord.isNotEmpty()) {
+                currentWord.deleteCharAt(currentWord.length - 1)
             }
         } else {
             inputConnection.commitText("", 1)
-            currentText.clear()
+            currentWord.clear()
         }
         updateSuggestions()
     }
@@ -106,6 +158,8 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     override fun onEnterPressed() {
         val inputConnection = currentInputConnection ?: return
         val editorInfo = currentInputEditorInfo
+        
+        currentWord.clear()
         
         when (editorInfo?.imeOptions?.and(EditorInfo.IME_MASK_ACTION)) {
             EditorInfo.IME_ACTION_SEARCH -> {
@@ -132,14 +186,13 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
                 )
             }
         }
-        currentText.clear()
         updateSuggestions()
     }
 
     override fun onSpacePressed() {
         val inputConnection = currentInputConnection ?: return
         inputConnection.commitText(" ", 1)
-        currentText.append(" ")
+        currentWord.clear()
         updateSuggestions()
     }
 
@@ -150,8 +203,12 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     }
 
     override fun onLanguageSwitch() {
-        val imeManager = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-        imeManager.showInputMethodPicker()
+        isVietnameseMode = !isVietnameseMode
+        saveLanguagePreference()
+        keyboardView?.updateLanguageIndicator(isVietnameseMode)
+        
+        val languageName = if (isVietnameseMode) "Tiếng Việt (Telex)" else "English"
+        Toast.makeText(this, languageName, Toast.LENGTH_SHORT).show()
     }
 
     override fun onEmojiPressed() {
@@ -173,25 +230,40 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     }
 
     private fun updateSuggestions() {
-        val suggestions = generateSuggestions(currentText.toString())
+        val suggestions = generateSuggestions(currentWord.toString())
         keyboardView?.updateSuggestions(suggestions)
     }
 
     private fun generateSuggestions(text: String): List<String> {
         if (text.isEmpty()) {
-            return listOf("I", "The", "Hello")
+            return if (isVietnameseMode) {
+                listOf("Xin", "Chào", "Cảm ơn")
+            } else {
+                listOf("I", "The", "Hello")
+            }
         }
 
-        val lastWord = text.split(" ").lastOrNull()?.lowercase() ?: ""
+        val lastWord = text.lowercase()
         
-        return when {
-            lastWord.startsWith("hel") -> listOf("Hello", "Help", "Hello!")
-            lastWord.startsWith("tha") -> listOf("Thanks", "That", "Thank you")
-            lastWord.startsWith("wha") -> listOf("What", "What's", "Whatever")
-            lastWord.startsWith("how") -> listOf("How", "How's", "However")
-            lastWord.startsWith("the") -> listOf("The", "They", "There")
-            lastWord.startsWith("go") -> listOf("Good", "Going", "Got")
-            else -> listOf("the", "and", "to")
+        return if (isVietnameseMode) {
+            when {
+                lastWord.startsWith("xi") -> listOf("Xin", "Xin chào", "Xin lỗi")
+                lastWord.startsWith("ch") -> listOf("Chào", "Cho", "Chúc")
+                lastWord.startsWith("ca") -> listOf("Cảm ơn", "Cám ơn", "Các")
+                lastWord.startsWith("to") -> listOf("Tôi", "Tốt", "Tổng")
+                lastWord.startsWith("ba") -> listOf("Bạn", "Bao", "Bằng")
+                else -> listOf("và", "là", "có")
+            }
+        } else {
+            when {
+                lastWord.startsWith("hel") -> listOf("Hello", "Help", "Hello!")
+                lastWord.startsWith("tha") -> listOf("Thanks", "That", "Thank you")
+                lastWord.startsWith("wha") -> listOf("What", "What's", "Whatever")
+                lastWord.startsWith("how") -> listOf("How", "How's", "However")
+                lastWord.startsWith("the") -> listOf("The", "They", "There")
+                lastWord.startsWith("go") -> listOf("Good", "Going", "Got")
+                else -> listOf("the", "and", "to")
+            }
         }
     }
 }

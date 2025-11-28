@@ -17,5 +17,6 @@ data class KeyboardState(
     var shiftState: ShiftState = ShiftState.OFF,
     var isDarkMode: Boolean = false,
     var isFloatingMode: Boolean = false,
-    var currentLanguage: String = "en"
+    var currentLanguage: String = "vi",
+    var isVietnameseMode: Boolean = true
 )

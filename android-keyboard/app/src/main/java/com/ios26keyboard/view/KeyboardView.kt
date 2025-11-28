@@ -265,7 +265,7 @@ class KeyboardView @JvmOverloads constructor(
                 setMargins(3, 3, 3, 6)
             }
 
-            text = "space"
+            text = if (keyboardView.keyboardState.isVietnameseMode) "Tiếng Việt" else "English"
             textSize = 15f
             gravity = android.view.Gravity.CENTER
             setTextColor(ContextCompat.getColor(context, R.color.white))
@@ -357,5 +357,10 @@ class KeyboardView @JvmOverloads constructor(
         suggestion1?.text = suggestions.getOrNull(0) ?: ""
         suggestion2?.text = suggestions.getOrNull(1) ?: ""
         suggestion3?.text = suggestions.getOrNull(2) ?: ""
+    }
+    
+    fun updateLanguageIndicator(isVietnamese: Boolean) {
+        keyboardState.isVietnameseMode = isVietnamese
+        refreshKeyboard()
     }
 }
