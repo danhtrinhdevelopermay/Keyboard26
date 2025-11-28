@@ -3,6 +3,8 @@ package com.ios26keyboard.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -29,6 +31,15 @@ class KeyboardView @JvmOverloads constructor(
     private lateinit var row3: LinearLayout
     private lateinit var row4: LinearLayout
     private lateinit var suggestionBar: LinearLayout
+    
+    private val accentPopup = AccentPopupView(context)
+    private val longPressHandler = Handler(Looper.getMainLooper())
+    private var longPressRunnable: Runnable? = null
+    private var isLongPressActive = false
+    
+    companion object {
+        private const val LONG_PRESS_DELAY = 300L
+    }
 
     interface OnKeyPressedListener {
         fun onKeyPressed(key: String)
@@ -170,24 +181,64 @@ class KeyboardView @JvmOverloads constructor(
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
 
             setOnTouchListener { view, event ->
+                val keyChar = text.toString().firstOrNull() ?: return@setOnTouchListener false
+                
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         KeyAnimationHelper.animateKeyPress(view)
                         HapticHelper.performKeyPressHaptic(view)
+                        keyboardView.isLongPressActive = false
+                        
+                        if (keyboardView.accentPopup.hasAccents(keyChar)) {
+                            keyboardView.longPressRunnable = Runnable {
+                                keyboardView.isLongPressActive = true
+                                HapticHelper.performKeyPressHaptic(view)
+                                keyboardView.accentPopup.show(view, keyChar) { accent ->
+                                    keyboardView.keyListener?.onKeyPressed(accent)
+                                    if (keyboardView.keyboardState.shiftState == ShiftState.ON) {
+                                        keyboardView.keyboardState.shiftState = ShiftState.OFF
+                                        keyboardView.refreshKeyboardInstant()
+                                    }
+                                }
+                            }
+                            keyboardView.longPressHandler.postDelayed(
+                                keyboardView.longPressRunnable!!,
+                                LONG_PRESS_DELAY
+                            )
+                        }
+                        true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        if (keyboardView.isLongPressActive && keyboardView.accentPopup.isShowing()) {
+                            keyboardView.accentPopup.updateSelection(view, event.x)
+                        }
                         true
                     }
                     MotionEvent.ACTION_UP -> {
                         KeyAnimationHelper.animateKeyRelease(view)
-                        keyboardView.keyListener?.onKeyPressed(text.toString())
-                        
-                        if (keyboardView.keyboardState.shiftState == ShiftState.ON) {
-                            keyboardView.keyboardState.shiftState = ShiftState.OFF
-                            keyboardView.refreshKeyboard()
+                        keyboardView.longPressRunnable?.let { 
+                            keyboardView.longPressHandler.removeCallbacks(it) 
                         }
+                        
+                        if (keyboardView.isLongPressActive && keyboardView.accentPopup.isShowing()) {
+                            keyboardView.accentPopup.confirmSelection()
+                        } else {
+                            keyboardView.keyListener?.onKeyPressed(text.toString())
+                            if (keyboardView.keyboardState.shiftState == ShiftState.ON) {
+                                keyboardView.keyboardState.shiftState = ShiftState.OFF
+                                keyboardView.refreshKeyboardInstant()
+                            }
+                        }
+                        keyboardView.isLongPressActive = false
                         true
                     }
                     MotionEvent.ACTION_CANCEL -> {
                         KeyAnimationHelper.animateKeyRelease(view)
+                        keyboardView.longPressRunnable?.let { 
+                            keyboardView.longPressHandler.removeCallbacks(it) 
+                        }
+                        keyboardView.accentPopup.dismiss()
+                        keyboardView.isLongPressActive = false
                         true
                     }
                     else -> false

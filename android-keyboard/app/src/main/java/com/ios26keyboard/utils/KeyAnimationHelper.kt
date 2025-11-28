@@ -19,29 +19,25 @@ object KeyAnimationHelper {
     private const val MODE_SWITCH_DURATION = 150L
 
     fun animateKeyPress(view: View) {
-        val scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 1f, 1.15f)
-        val scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 1f, 1.15f)
-        val elevation = ObjectAnimator.ofFloat(view, View.TRANSLATION_Z, 2f, 8f)
-
-        AnimatorSet().apply {
-            playTogether(scaleX, scaleY, elevation)
-            duration = PRESS_DURATION
-            interpolator = AccelerateDecelerateInterpolator()
-            start()
-        }
+        view.animate().cancel()
+        view.animate()
+            .alpha(0.6f)
+            .scaleX(0.95f)
+            .scaleY(0.95f)
+            .setDuration(PRESS_DURATION)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .start()
     }
 
     fun animateKeyRelease(view: View) {
-        val scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, view.scaleX, 1f)
-        val scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, view.scaleY, 1f)
-        val elevation = ObjectAnimator.ofFloat(view, View.TRANSLATION_Z, view.translationZ, 2f)
-
-        AnimatorSet().apply {
-            playTogether(scaleX, scaleY, elevation)
-            duration = RELEASE_DURATION
-            interpolator = OvershootInterpolator(1.5f)
-            start()
-        }
+        view.animate().cancel()
+        view.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(RELEASE_DURATION)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
     }
 
     fun animateRippleLight(view: View, isDarkMode: Boolean) {
