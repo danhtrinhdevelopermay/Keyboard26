@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark Mode Override - iOS 26 Style Translucent -->
-    <color name="keyboard_bg_light">#80232326</color>
+    <!-- Dark Mode Override - iOS 26 Style Translucent 90% blur -->
+    <color name="keyboard_bg_light">#1A232326</color>
     <color name="key_bg_light">#99424247</color>
     <color name="key_text_light">#FFFFFFFF</color>
     <color name="key_special_bg_light">#99323235</color>

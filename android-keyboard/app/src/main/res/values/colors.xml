@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- iOS 26 Style Dark Keyboard Colors -->
-    <!-- Keyboard background - semi-transparent for blur effect -->
-    <color name="keyboard_bg_light">#80232326</color>
+    <!-- Keyboard background - very transparent for 90% blur effect like iOS -->
+    <color name="keyboard_bg_light">#1A232326</color>
     <color name="key_bg_light">#99424247</color>
     <color name="key_text_light">#FFFFFFFF</color>
     <color name="key_special_bg_light">#99323235</color>
@@ -10,7 +10,7 @@
     <color name="suggestion_bg_light">#00000000</color>
     
     <!-- Dark Mode Colors - iOS 26 Style -->
-    <color name="keyboard_bg_dark">#80232326</color>
+    <color name="keyboard_bg_dark">#1A232326</color>
     <color name="key_bg_dark">#99424247</color>
     <color name="key_text_dark">#FFFFFFFF</color>
     <color name="key_special_bg_dark">#99323235</color>

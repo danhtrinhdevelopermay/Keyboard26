@@ -136,6 +136,10 @@ base64 -w 0 release.keystore > keystore_base64.txt
 3. Download từ Actions > Artifacts
 
 ## Recent Changes
+- 2025-11-28: Enhanced gaussian blur to 90% like iOS
+  - Background opacity reduced to 10% (#1A232326)
+  - Blur radius increased to 80px
+  - Added saturation boost (180%) for better visual effect
 - 2025-11-28: Added navigation bar hiding when keyboard opens
   - Uses WindowInsetsController for Android 11+ (API 30+)
   - Falls back to SYSTEM_UI_FLAG for older Android versions

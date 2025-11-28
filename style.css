@@ -5,15 +5,15 @@
 }
 
 :root {
-    /* iOS 26 Style - Dark keyboard with blur */
-    --keyboard-bg-light: rgba(35, 35, 38, 0.5);
+    /* iOS 26 Style - Dark keyboard with 90% blur effect */
+    --keyboard-bg-light: rgba(35, 35, 38, 0.1);
     --key-bg-light: rgba(66, 66, 71, 0.6);
     --key-text-light: #FFFFFF;
     --key-special-bg-light: rgba(50, 50, 53, 0.6);
     --gradient-top-light: #232326;
     --gradient-bottom-light: #1A1A1E;
     
-    --keyboard-bg-dark: rgba(35, 35, 38, 0.5);
+    --keyboard-bg-dark: rgba(35, 35, 38, 0.1);
     --key-bg-dark: rgba(66, 66, 71, 0.6);
     --key-text-dark: #FFFFFF;
     --key-special-bg-dark: rgba(50, 50, 53, 0.6);
@@ -253,8 +253,8 @@ body {
     position: absolute;
     inset: 0;
     background: var(--keyboard-bg-light);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
+    backdrop-filter: blur(80px) saturate(180%);
+    -webkit-backdrop-filter: blur(80px) saturate(180%);
 }
 
 .keyboard.dark-mode .keyboard-glass {

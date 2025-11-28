@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <!-- Semi-transparent dark background to show gaussian blur effect -->
-    <solid android:color="#80232326" />
+    <!-- Very transparent background for 90% gaussian blur effect like iOS -->
+    <solid android:color="#1A232326" />
 </shape>
