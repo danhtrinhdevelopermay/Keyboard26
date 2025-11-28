@@ -136,6 +136,10 @@ base64 -w 0 release.keystore > keystore_base64.txt
 3. Download từ Actions > Artifacts
 
 ## Recent Changes
+- 2025-11-28: Added navigation bar hiding when keyboard opens
+  - Uses WindowInsetsController for Android 11+ (API 30+)
+  - Falls back to SYSTEM_UI_FLAG for older Android versions
+  - Immersive sticky mode for smooth UX
 - 2025-11-28: Updated to iOS 26 dark keyboard style
   - Dark semi-transparent keys (#424247) with white text
   - Special keys with darker background (#323235)

@@ -6,6 +6,8 @@ import android.os.Build
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import com.ios26keyboard.model.KeyboardMode
@@ -23,12 +25,33 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     override fun onWindowShown() {
         super.onWindowShown()
         enableBackdropBlur()
+        hideNavigationBar()
     }
 
     private fun enableBackdropBlur() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             window?.window?.let { window ->
                 window.setBackgroundBlurRadius(40)
+            }
+        }
+    }
+
+    private fun hideNavigationBar() {
+        window?.window?.let { window ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.insetsController?.let { controller ->
+                    controller.hide(WindowInsets.Type.navigationBars())
+                    controller.systemBarsBehavior = 
+                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                )
             }
         }
     }
