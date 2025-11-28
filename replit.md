@@ -134,6 +134,13 @@ base64 -w 0 release.keystore > keystore_base64.txt
 3. Download từ Actions > Artifacts
 
 ## Recent Changes
+- 2025-11-28: Fixed app crash on launch
+  - Added missing CardView dependency (cause of InflateException)
+  - Changed theme to Theme.AppCompat.DayNight.NoActionBar for better compatibility
+  - Removed unused imports (android.renderscript.*)
+  - Removed unused Blurry library
+  - Added values-night resources for proper dark mode support
+  - Fixed Kotlin scope resolution in KeyboardView.kt
 - 2025-11-28: Initial project setup
 - 2025-11-28: Added GitHub Actions workflow for APK build
 - Created full Android Kotlin keyboard implementation
