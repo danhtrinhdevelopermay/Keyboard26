@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Light Mode Colors - iOS Style -->
-    <color name="keyboard_bg_light">#D9D9D9DC</color>
-    <color name="key_bg_light">#FFFFFFFF</color>
+    <color name="keyboard_bg_light">#99C8C8CC</color>
+    <color name="key_bg_light">#E6FFFFFF</color>
     <color name="key_text_light">#FF000000</color>
-    <color name="key_special_bg_light">#FFAEB3BB</color>
+    <color name="key_special_bg_light">#CC6D6D70</color>
     <color name="key_pressed_light">#FF007AFF</color>
-    <color name="gradient_top_light">#E6EBEBF0</color>
-    <color name="gradient_bottom_light">#E6D1D1D6</color>
     <color name="suggestion_bg_light">#00000000</color>
     
     <!-- Dark Mode Colors - iOS Style -->
-    <color name="keyboard_bg_dark">#CC2C2C2E</color>
-    <color name="key_bg_dark">#FF636366</color>
-    <color name="key_text_dark">#FFFFFFFF</color>
-    <color name="key_special_bg_dark">#FF46464A</color>
+    <color name="keyboard_bg_dark">#802C2C2E</color>
+    <color name="key_bg_dark">#99FFFFFF</color>
+    <color name="key_text_dark">#FF000000</color>
+    <color name="key_special_bg_dark">#CC454548</color>
     <color name="key_pressed_dark">#FF0A84FF</color>
-    <color name="gradient_top_dark">#CC3A3A3C</color>
-    <color name="gradient_bottom_dark">#CC2C2C2E</color>
     <color name="suggestion_bg_dark">#00000000</color>
     
     <!-- Accent Colors -->
     <color name="accent_blue">#FF007AFF</color>
-    <color name="accent_blue_light">#FF5AC8FA</color>
-    <color name="ripple_light">#20007AFF</color>
-    <color name="shadow_color">#15000000</color>
+    <color name="ripple_light">#30007AFF</color>
     
     <!-- Common Colors -->
     <color name="white">#FFFFFFFF</color>
