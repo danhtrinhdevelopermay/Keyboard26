@@ -50,6 +50,14 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
         enableBackdropBlur()
         hideNavigationBar()
     }
+    
+    override fun onComputeInsets(outInsets: Insets?) {
+        super.onComputeInsets(outInsets)
+        outInsets?.let {
+            it.contentTopInsets = it.visibleTopInsets
+        }
+        hideNavigationBar()
+    }
 
     private fun enableBackdropBlur() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -62,6 +70,7 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     private fun hideNavigationBar() {
         window?.window?.let { window ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.setDecorFitsSystemWindows(false)
                 window.insetsController?.let { controller ->
                     controller.hide(WindowInsets.Type.navigationBars())
                     controller.systemBarsBehavior = 
@@ -74,8 +83,17 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
                     or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
                 )
             }
+        }
+        
+        keyboardView?.let { view ->
+            view.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            )
         }
     }
 
