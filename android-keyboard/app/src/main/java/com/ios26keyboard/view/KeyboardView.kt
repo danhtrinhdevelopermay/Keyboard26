@@ -42,9 +42,14 @@ class KeyboardView @JvmOverloads constructor(
     private var lastTrackpadX = 0f
     private val trackpadThreshold = 20f
     
+    private var deleteRepeatRunnable: Runnable? = null
+    private var isDeleteRepeating = false
+    
     companion object {
         private const val LONG_PRESS_DELAY = 300L
         private const val TRACKPAD_DELAY = 200L
+        private const val DELETE_INITIAL_DELAY = 400L
+        private const val DELETE_REPEAT_DELAY = 50L
         
         const val RETURN_KEY_RETURN = "return"
         const val RETURN_KEY_SEARCH = "Search"
@@ -107,7 +112,7 @@ class KeyboardView @JvmOverloads constructor(
         KeyboardLayout.qwertyRow3.forEach { keyData ->
             row3.addView(createKeyView(keyData))
         }
-        row3.addView(createSpecialKeyView("⌫", "delete", 1.5f))
+        row3.addView(createDeleteKeyView())
 
         row4.addView(createSpecialKeyView("123", "numbers", 1.2f))
         row4.addView(createSpecialKeyView("🌐", "globe", 1f))
@@ -133,7 +138,7 @@ class KeyboardView @JvmOverloads constructor(
         KeyboardLayout.numbersRow3.forEach { keyData ->
             row3.addView(createKeyView(keyData))
         }
-        row3.addView(createSpecialKeyView("⌫", "delete", 1.5f))
+        row3.addView(createDeleteKeyView())
 
         row4.addView(createSpecialKeyView("ABC", "letters", 1.2f))
         row4.addView(createSpecialKeyView("🌐", "globe", 1f))
@@ -159,12 +164,72 @@ class KeyboardView @JvmOverloads constructor(
         KeyboardLayout.symbolsRow3.forEach { keyData ->
             row3.addView(createKeyView(keyData))
         }
-        row3.addView(createSpecialKeyView("⌫", "delete", 1.5f))
+        row3.addView(createDeleteKeyView())
 
         row4.addView(createSpecialKeyView("ABC", "letters", 1.2f))
         row4.addView(createSpecialKeyView("🌐", "globe", 1f))
         row4.addView(createSpaceKeyView())
         row4.addView(createReturnKeyView())
+    }
+    
+    @SuppressLint("ClickableViewAccessibility")
+    private fun createDeleteKeyView(): TextView {
+        val keyboardView = this@KeyboardView
+        return TextView(context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                0,
+                resources.getDimensionPixelSize(R.dimen.key_height)
+            ).apply {
+                weight = 1.5f
+                val marginH = resources.getDimensionPixelSize(R.dimen.key_margin_horizontal)
+                val marginV = resources.getDimensionPixelSize(R.dimen.key_margin_vertical)
+                val marginB = resources.getDimensionPixelSize(R.dimen.key_margin_bottom)
+                setMargins(marginH, marginV, marginH, marginB)
+            }
+
+            text = "⌫"
+            textSize = 18f
+            gravity = android.view.Gravity.CENTER
+            setTextColor(ContextCompat.getColor(context, R.color.white))
+            background = ContextCompat.getDrawable(context, R.drawable.special_key_background)
+            elevation = 1f
+            typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+
+            setOnTouchListener { view, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        KeyAnimationHelper.animateKeyPress(view)
+                        HapticHelper.performKeyPressHaptic(view)
+                        keyboardView.keyListener?.onDeletePressed()
+                        keyboardView.isDeleteRepeating = false
+                        
+                        keyboardView.deleteRepeatRunnable = object : Runnable {
+                            override fun run() {
+                                keyboardView.isDeleteRepeating = true
+                                keyboardView.keyListener?.onDeletePressed()
+                                HapticHelper.performLightHaptic(view)
+                                keyboardView.longPressHandler.postDelayed(this, DELETE_REPEAT_DELAY)
+                            }
+                        }
+                        keyboardView.longPressHandler.postDelayed(
+                            keyboardView.deleteRepeatRunnable!!,
+                            DELETE_INITIAL_DELAY
+                        )
+                        true
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        KeyAnimationHelper.animateKeyRelease(view)
+                        keyboardView.deleteRepeatRunnable?.let {
+                            keyboardView.longPressHandler.removeCallbacks(it)
+                        }
+                        keyboardView.deleteRepeatRunnable = null
+                        keyboardView.isDeleteRepeating = false
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
     }
     
     @SuppressLint("ClickableViewAccessibility")
