@@ -221,32 +221,38 @@ class VietnameseInputProcessor {
         val hasTrailingConsonant = (lastVowelPos < word.lastIndex) && 
             word.substring(lastVowelPos + 1).any { it.lowercaseChar() in consonants }
         
+        if (hasTrailingConsonant) {
+            return vowelPositions.last()
+        }
+        
         if (vowelPositions.size >= 2) {
             val lastVowel = getBaseVowel(word[vowelPositions.last()].lowercaseChar())
             val secondLastVowel = getBaseVowel(word[vowelPositions[vowelPositions.size - 2]].lowercaseChar())
             
             if (secondLastVowel == 'o' && lastVowel in setOf('a', 'e')) {
-                return vowelPositions[vowelPositions.size - 2]
+                return vowelPositions.last()
             }
             
             if (secondLastVowel == 'u' && lastVowel == 'y') {
+                return vowelPositions.last()
+            }
+            
+            if (secondLastVowel == 'i' && lastVowel == 'a') {
+                return vowelPositions.last()
+            }
+            
+            if (secondLastVowel == 'u' && lastVowel in setOf('a', 'e', 'i', 'o')) {
+                return vowelPositions.last()
+            }
+            
+            if (lastVowel in setOf('i', 'u', 'y') && secondLastVowel in setOf('a', 'e', 'o')) {
                 return vowelPositions[vowelPositions.size - 2]
             }
             
-            if (lastVowel in setOf('i', 'u', 'y')) {
-                return vowelPositions[vowelPositions.size - 2]
-            }
-            
-            if (hasTrailingConsonant) {
-                return vowelPositions[vowelPositions.size - 1]
-            }
+            return vowelPositions[vowelPositions.size - 2]
         }
         
-        return if (vowelPositions.size >= 2) {
-            vowelPositions[vowelPositions.size - 2]
-        } else {
-            vowelPositions.last()
-        }
+        return vowelPositions.last()
     }
     
     private fun applyToneAtPosition(word: String, position: Int, tone: ToneType): ProcessResult {
