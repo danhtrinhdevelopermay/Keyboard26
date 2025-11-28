@@ -28,7 +28,7 @@ class iOS26KeyboardService : InputMethodService(), KeyboardView.OnKeyPressedList
     private fun enableBackdropBlur() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             window?.window?.let { window ->
-                window.setBackgroundBlurRadius(25)
+                window.setBackgroundBlurRadius(40)
             }
         }
     }
