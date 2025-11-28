@@ -210,6 +210,10 @@ class VietnameseInputProcessor {
     }
     
     private fun findTonePosition(word: String, vowelPositions: List<Int>): Int {
+        val lastVowelPos = vowelPositions.last()
+        val hasTrailingConsonant = (lastVowelPos < word.lastIndex) && 
+            word.substring(lastVowelPos + 1).any { it.lowercaseChar() in consonants }
+        
         for (pos in vowelPositions) {
             val baseVowel = getBaseVowel(word[pos].lowercaseChar())
             if (baseVowel != null && baseVowel in priorityVowels) {
@@ -217,39 +221,69 @@ class VietnameseInputProcessor {
             }
         }
         
-        val lastVowelPos = vowelPositions.last()
-        val hasTrailingConsonant = (lastVowelPos < word.lastIndex) && 
-            word.substring(lastVowelPos + 1).any { it.lowercaseChar() in consonants }
-        
-        if (hasTrailingConsonant) {
-            return vowelPositions.last()
+        if (vowelPositions.size == 1) {
+            return vowelPositions[0]
         }
         
-        if (vowelPositions.size >= 2) {
-            val lastVowel = getBaseVowel(word[vowelPositions.last()].lowercaseChar())
-            val secondLastVowel = getBaseVowel(word[vowelPositions[vowelPositions.size - 2]].lowercaseChar())
+        if (vowelPositions.size == 2) {
+            val firstVowelPos = vowelPositions[0]
+            val secondVowelPos = vowelPositions[1]
             
-            if (secondLastVowel == 'o' && lastVowel in setOf('a', 'e')) {
-                return vowelPositions.last()
+            if (secondVowelPos - firstVowelPos == 1) {
+                val firstVowel = getBaseVowel(word[firstVowelPos].lowercaseChar())
+                val secondVowel = getBaseVowel(word[secondVowelPos].lowercaseChar())
+                
+                if (hasTrailingConsonant) {
+                    return secondVowelPos
+                }
+                
+                val dipthongFirstVowel = setOf(
+                    Pair('o', 'a'), Pair('o', 'e'), Pair('o', 'i'),
+                    Pair('u', 'a'), Pair('u', 'e'), Pair('u', 'i'), Pair('u', 'o'), Pair('u', 'y'),
+                    Pair('i', 'a'), Pair('i', 'e'), Pair('i', 'u')
+                )
+                
+                if (Pair(firstVowel, secondVowel) in dipthongFirstVowel) {
+                    return secondVowelPos
+                }
+                
+                val dipthongSecondVowel = setOf(
+                    Pair('a', 'i'), Pair('a', 'o'), Pair('a', 'u'), Pair('a', 'y'),
+                    Pair('e', 'o'), Pair('e', 'u'),
+                    Pair('i', 'u'),
+                    Pair('o', 'i'),
+                    Pair('u', 'i')
+                )
+                
+                if (Pair(firstVowel, secondVowel) in dipthongSecondVowel) {
+                    return firstVowelPos
+                }
+                
+                return firstVowelPos
+            } else {
+                return secondVowelPos
+            }
+        }
+        
+        if (vowelPositions.size >= 3) {
+            val len = vowelPositions.size
+            val pos1 = vowelPositions[len - 3]
+            val pos2 = vowelPositions[len - 2]
+            val pos3 = vowelPositions[len - 1]
+            
+            if (pos3 - pos1 == 2 && pos2 - pos1 == 1) {
+                return pos2
             }
             
-            if (secondLastVowel == 'u' && lastVowel == 'y') {
-                return vowelPositions.last()
+            if (hasTrailingConsonant) {
+                return pos3
             }
             
-            if (secondLastVowel == 'i' && lastVowel == 'a') {
-                return vowelPositions.last()
+            if (pos3 - pos2 == 1) {
+                return pos2
             }
             
-            if (secondLastVowel == 'u' && lastVowel in setOf('a', 'e', 'i', 'o')) {
-                return vowelPositions.last()
-            }
-            
-            if (lastVowel in setOf('i', 'u', 'y') && secondLastVowel in setOf('a', 'e', 'o')) {
-                return vowelPositions[vowelPositions.size - 2]
-            }
-            
-            return vowelPositions[vowelPositions.size - 2]
+            return pos3
         }
         
         return vowelPositions.last()
